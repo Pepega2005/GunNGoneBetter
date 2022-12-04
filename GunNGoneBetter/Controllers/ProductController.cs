@@ -7,6 +7,8 @@ using GunNGoneBetter.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using GunNGoneBetter.Models.ViewModels;
 using System.Text.RegularExpressions;
+using System.IO;
+using Microsoft.EntityFrameworkCore;
 
 namespace GunNGoneBetter.Controllers
 {
@@ -59,6 +61,12 @@ namespace GunNGoneBetter.Controllers
                 {
                     Text = x.Name,
                     Value = x.Id.ToString()
+                }),
+                MyModelsList = db.MyModel.Select(x =>
+                new SelectListItem
+                {
+                    Text = x.Name,
+                    Value = x.Id.ToString()
                 })
             };
 
@@ -89,19 +97,19 @@ namespace GunNGoneBetter.Controllers
         {
             var files = HttpContext.Request.Form.Files;
 
-            string wwRoot = webHostEnvironment.WebRootPath;
+            string wwwRoot = webHostEnvironment.WebRootPath;
 
             if (productViewModel.Product.Id == 0)
             {
                 // create
-                string upload = wwRoot + PathManager.ImageProductPath;
+                string upload = wwwRoot + PathManager.ImageProductPath;
                 string imageName = Guid.NewGuid().ToString();
 
                 string extension = Path.GetExtension(files[0].FileName);
 
                 string path = upload + imageName + extension;
 
-                // скопируем фацл на сервер
+                // скопируем файл на сервер
                 using (var fileStream = new FileStream(path, FileMode.Create))
                 {
                     files[0].CopyTo(fileStream);
@@ -114,6 +122,37 @@ namespace GunNGoneBetter.Controllers
             else
             {
                 // update
+                // AsNoTracking() - important!!!
+                var product = db.Product.AsNoTracking().FirstOrDefault( u => u.Id == productViewModel.Product.Id);
+
+                if (files.Count > 0) // юзер загружает другой файл
+                {
+                    string upload = wwwRoot + PathManager.ImageProductPath;
+                    string imageName = Guid.NewGuid().ToString();
+                    string extension = Path.GetExtension(files[0].FileName);
+                    string path = upload + imageName + extension;
+
+                    // delete old file
+                    var oldFile = upload + product.Image;
+
+                    if (System.IO.File.Exists(oldFile))
+                    {
+                        System.IO.File.Delete(oldFile);
+                    }
+
+                    using (var fileStream = new FileStream(path, FileMode.Create))
+                    {
+                        files[0].CopyTo(fileStream);
+                    }
+
+                    productViewModel.Product.Image = imageName + extension;
+                }
+                else // фотка не поменялась
+                {
+                    productViewModel.Product.Image = product.Image; // оставляем имя прежним
+                }
+
+                db.Product.Update(productViewModel.Product);
             }
             
             db.SaveChanges();
@@ -121,6 +160,53 @@ namespace GunNGoneBetter.Controllers
             return RedirectToAction("Index");
 
             //return View();
+        }
+
+        // GET - DELETE
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            Product product = db.Product.Find(id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            product.Category = db.Category.Find(product.CategoryId);
+
+            return View(product);
+        }
+
+        // POST - DELETE
+        [HttpPost]
+        public IActionResult DeletePost(int? id)
+        {
+            string wwwRoot = webHostEnvironment.WebRootPath;
+            string upload = wwwRoot + PathManager.ImageProductPath;
+
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            Product product = db.Product.Find(id);
+
+            var oldFile = upload + product.Image;
+
+            if (System.IO.File.Exists(oldFile))
+            {
+                System.IO.File.Delete(oldFile);
+            }
+
+            db.Product.Remove(product);
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
         }
     }
 

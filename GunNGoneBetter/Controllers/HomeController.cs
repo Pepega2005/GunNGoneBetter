@@ -1,5 +1,8 @@
-﻿using GunNGoneBetter.Models;
+﻿using GunNGoneBetter.Data;
+using GunNGoneBetter.Models;
+using GunNGoneBetter.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace GunNGoneBetter.Controllers
@@ -7,15 +10,23 @@ namespace GunNGoneBetter.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private ApplicationDbContext db;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext db)
         {
+            this.db = db;
             _logger = logger;
         }
 
         public IActionResult Index()
         {
-            return View();
+            HomeViewModel homeViewModel = new HomeViewModel()
+            {
+                Products = db.Product.Include(u => u.Category),
+                Categories = db.Category
+            };
+
+            return View(homeViewModel);
         }
 
         public IActionResult Privacy()

@@ -15,6 +15,8 @@ namespace GunNGoneBetter.Models
 
         public string Description { get; set; }
 
+        public string ShortDescription { get; set; }
+
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Value has to be higher than 0.")]
         public double Price { get; set; }
@@ -28,5 +30,11 @@ namespace GunNGoneBetter.Models
         // добавление внешнего ключа - связь с другой таблицей
         [ForeignKey("CategoryId")]
         public virtual Category Category { get; set; }
+
+        [Display(Name = "MyModel Id")]
+        public int? MyModelId { get; set; }
+
+        [ForeignKey("MyModelId")]
+        public virtual MyModel MyModel { get; set; }
     }
 }

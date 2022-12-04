@@ -28,12 +28,18 @@ namespace GunNGoneBetter.Controllers
 
         // POST - Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create(MyModel myModel)
         {
-            db.MyModel.Add(myModel);
-            db.SaveChanges();
+            if (ModelState.IsValid) // проверка модели на валидность
+            {
+                db.MyModel.Add(myModel);
+                db.SaveChanges();
 
-            return RedirectToAction("Index");
+                return RedirectToAction("Index");
+            }
+
+            return View(myModel);
         }
 
         // GET - Edit

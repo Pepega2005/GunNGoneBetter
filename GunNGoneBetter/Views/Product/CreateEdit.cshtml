@@ -34,6 +34,11 @@
         <textarea asp-for="Product.Description" class="form-control summernote"></textarea>
         <span asp-validation-for="Product.Description" class="text-danger"></span>
     </p>
+
+    <p>
+        <label asp-for="Product.ShortDescription"></label>
+        <input asp-for="Product.ShortDescription" class="form-control" />
+        <span asp-validation-for="Product.ShortDescription" class="text-danger"></span>
     </p>
 
     <p>
@@ -49,6 +54,16 @@
             <option disabled selected>-- Choose the category --</option>
         </select>
         <span asp-validation-for="Product.CategoryId" class="text-danger"></span>
+    </p>
+
+    <p>
+        <label asp-for="Product.MyModelId"></label>
+        <!--<select asp-for="CategoryId" asp-items="@ViewBag.CategoriesList" class="form-control">-->
+        <select asp-for="Product.MyModelId" asp-items="@Model.MyModelsList" 
+                class="form-control">
+            <option disabled selected>-- Choose the model --</option>
+        </select>
+        <span asp-validation-for="Product.MyModelId" class="text-danger"></span>
     </p>
 
     <p>
@@ -68,6 +83,13 @@
         <div asp-validation-summary="All"></div>
     </p>
 </form>
+
+@if (Model.Product.Id != 0)
+{
+        <p>
+            <img src="@PathManager.ImageProductPath@Model.Product.Image" width="100" />
+        </p>
+}
 
 @section Scripts {
     @{
