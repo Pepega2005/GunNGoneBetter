@@ -3,6 +3,7 @@ using GunNGoneBetter.Models;
 using GunNGoneBetter.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Diagnostics;
 
 namespace GunNGoneBetter.Controllers
@@ -27,6 +28,19 @@ namespace GunNGoneBetter.Controllers
             };
 
             return View(homeViewModel);
+        }
+
+        public IActionResult Details(int id)
+        {
+            DetailsViewModel detailsViewModel = new DetailsViewModel()
+            {
+                isInCart = false,
+                //Product = db.Product.Find(id)
+                Product = db.Product.Include(x => x.Category).
+                Where(x => x.Id == id).FirstOrDefault()
+            };
+
+            return View(detailsViewModel);
         }
 
         public IActionResult Privacy()
