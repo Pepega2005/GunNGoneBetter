@@ -1,5 +1,11 @@
 ﻿@model GunNGoneBetter.Models.ViewModels.DetailsViewModel
 
+<form method="post" asp-action="DetailsPost">
+
+    <p>
+        <input asp-for="Product.Id" hidden />
+    </p>
+
 <p>
     <h2>@Model.Product.Name</h2>
 
@@ -21,5 +27,8 @@
 <p>
     <a class="btn btn-primary" asp-action="Index"> Back </a>
 
-    <a class="btn btn-primary"> Add to cart </a>
+    <button type="submit" class="btn btn-primary">
+        Add to cart
+    </button>
 </p>
+</form>

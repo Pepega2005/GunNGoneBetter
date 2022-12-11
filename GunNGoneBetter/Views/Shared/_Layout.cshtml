@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Http
+@using GunNGoneBetter.Utility
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -43,6 +47,26 @@
                                 </li>
                             </ul>
                          </li>
+
+                         <li>
+                             @if (HttpContextAccessor.HttpContext.Session.Get<List<Cart>>(PathManager.SessionCart) != null)
+                             {
+                                var count = HttpContextAccessor.HttpContext.
+                                Session.Get<List<Cart>>(PathManager.SessionCart).Count();
+
+                                <a href="#" class="nav-link">
+                                    <i class="fa-solid fa-cart-shopping"></i> &nbsp; (@count)
+                                </a>
+                            }
+                             else
+                             {
+                                 <a href="#" class="nav-link">
+                                    <i class="fa-solid fa-cart-shopping"></i> &nbsp; (0)
+                                 </a>
+                             }
+
+                         </li>
+
                     </ul>
                 </div>
             </div>
