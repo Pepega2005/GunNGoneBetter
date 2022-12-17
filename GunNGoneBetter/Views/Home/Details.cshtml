@@ -27,8 +27,19 @@
 <p>
     <a class="btn btn-primary" asp-action="Index"> Back </a>
 
-    <button type="submit" class="btn btn-primary">
-        Add to cart
-    </button>
+    @if (Model.isInCart)
+    {
+        <a asp-action="RemoveFromCart" asp-route-id="@Model.Product.Id" class="btn btn-warning">
+            Remove from cart
+        </a>
+    }
+    else
+    {
+        <button type="submit" asp-route-id="@Model.Product.Id" class="btn btn-primary"
+                asp-action="DetailsPost">
+            Add to cart
+        </button>
+    }
+
 </p>
 </form>

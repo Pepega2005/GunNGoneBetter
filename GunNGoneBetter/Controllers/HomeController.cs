@@ -1,6 +1,7 @@
 ﻿using GunNGoneBetter.Data;
 using GunNGoneBetter.Models;
 using GunNGoneBetter.Models.ViewModels;
+using GunNGoneBetter.Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -32,6 +33,14 @@ namespace GunNGoneBetter.Controllers
 
         public IActionResult Details(int id)
         {
+            List<Cart> cartList = new List<Cart>();
+
+            if (HttpContext.Session.Get<IEnumerable<Cart>>(PathManager.SessionCart) != null
+                && HttpContext.Session.Get<IEnumerable<Cart>>(PathManager.SessionCart).Count() > 0)
+            {
+                cartList = HttpContext.Session.Get<List<Cart>>(PathManager.SessionCart);
+            }
+
             DetailsViewModel detailsViewModel = new DetailsViewModel()
             {
                 isInCart = false,
@@ -40,15 +49,65 @@ namespace GunNGoneBetter.Controllers
                 Where(x => x.Id == id).FirstOrDefault()
             };
 
+            // проверка на наличие товара в корзине
+            // если товар есть, то меняем свойство
+            foreach (var item in cartList)
+            {
+                if (item.ProductId == id)
+                {
+                    detailsViewModel.isInCart = true;
+                }
+            }
+
             return View(detailsViewModel);
         }
 
         [HttpPost]
         public IActionResult DetailsPost(int id)
         {
-            
+            List<Cart> cartList = new List<Cart>();
 
-            return View();
+            if (HttpContext.Session.Get<IEnumerable<Cart>>(PathManager.SessionCart) != null
+                && HttpContext.Session.Get<IEnumerable<Cart>>(PathManager.SessionCart).Count() > 0)
+            {
+                cartList = HttpContext.Session.Get<List<Cart>>(PathManager.SessionCart);
+            }
+
+            cartList.Add(new Cart() { ProductId = id});
+
+            HttpContext.Session.Set(PathManager.SessionCart, cartList);
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult RemoveFromCart(int id)
+        {
+            List<Cart> cartList = new List<Cart>();
+
+            if (HttpContext.Session.Get<IEnumerable<Cart>>(PathManager.SessionCart) != null
+                && HttpContext.Session.Get<IEnumerable<Cart>>(PathManager.SessionCart).Count() > 0)
+            {
+                cartList = HttpContext.Session.Get<List<Cart>>(PathManager.SessionCart);
+            }
+
+            /*for (int i = 0; i < cartList.Count; i++)
+            {
+                if (id == cartList[i].ProductId)
+                {
+                    cartList.Remove(new Cart() { ProductId = id });
+                }
+            }*/
+
+            var item = cartList.Single(x => x.ProductId == id);
+
+            if (item != null)
+            {
+                cartList.Remove(item);
+            }
+
+            HttpContext.Session.Set(PathManager.SessionCart, cartList);
+
+            return RedirectToAction("Index");
         }
 
         public IActionResult Privacy()
