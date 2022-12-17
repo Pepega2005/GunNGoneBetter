@@ -1,10 +1,11 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using GunNGoneBetter.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace GunNGoneBetter.Data
 {
-    public class ApplicationDbContext: DbContext
+    public class ApplicationDbContext: IdentityDbContext // изменили наследование
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

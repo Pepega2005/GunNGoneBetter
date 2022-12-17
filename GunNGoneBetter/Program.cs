@@ -1,4 +1,5 @@
 using GunNGoneBetter.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +20,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
+// для автоматической генерации таблиц в бд
+builder.Services.AddDefaultIdentity<IdentityUser>().
+    AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddControllersWithViews(); // MVC
 
 var app = builder.Build();
@@ -35,6 +40,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
