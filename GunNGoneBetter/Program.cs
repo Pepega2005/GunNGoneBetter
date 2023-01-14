@@ -1,18 +1,19 @@
 using GunNGoneBetter.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddHttpContextAccessor(); // нужно для работы с сессиями во View
+builder.Services.AddHttpContextAccessor(); // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ View
 
 builder.Services.AddSession(options =>
 {
     options.Cookie.Name = "ResidentEvil4";
     //options.IdleTimeout = TimeSpan.FromSeconds(10);
-}); // для работы с сессиями
+}); // пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(
@@ -20,9 +21,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
-// для автоматической генерации таблиц в бд
-builder.Services.AddDefaultIdentity<IdentityUser>().
+// пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ
+//builder.Services.AddDefaultIdentity<IdentityUser>().
+//    AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddIdentity<IdentityUser, IdentityRole>().
+    AddDefaultUI().AddDefaultTokenProviders().
     AddEntityFrameworkStores<ApplicationDbContext>();
+
 
 builder.Services.AddControllersWithViews(); // MVC
 
@@ -49,7 +55,9 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.UseSession(); // добавление middleware для работы с сессиями
+app.MapRazorPages(); // РґР»СЏ РѕРїСЂРµРґРµР»РµРЅРёСЏ РјР°СЂС€СЂСѓС‚Р° Рє СЃС‚СЂР°РЅРёС†Рµ Razor
+
+app.UseSession(); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ middleware пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 
 /*app.Use((context, next) =>
 {
