@@ -1,0 +1,17 @@
+﻿@model GunNGoneBetter.Models.Product
+
+
+<div class="card filter" style="width: 18rem;">
+  <img src="@PathManager.ImageProductPath@Model.Image" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">@Model.Name</h5>
+    <p class="card-text">
+            Description: @Model.ShortDescription
+    </p>
+    <p class="card-text">
+            Price: @Model.Price
+    </p>
+    <span class="badge text-bg-primary">Primary</span>
+    <a asp-action="Remove" asp-route-id="@Model.Id" class="btn btn-danger">TRASH</a>
+  </div>
+</div>
