@@ -2,7 +2,6 @@
 using GunNGoneBetter.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using GunNGoneBetter.Data;
 using GunNGoneBetter.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using GunNGoneBetter.Models.ViewModels;

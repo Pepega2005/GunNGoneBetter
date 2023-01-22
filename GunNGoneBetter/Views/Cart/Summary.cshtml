@@ -9,11 +9,13 @@
     <p>
         <label>Name</label>
         <input type="text" asp-for="@Model.ApplicationUser.FullName" class="form-control" />
+        <span asp-validation-for="ApplicationUser.FullName" class="text-danger"></span>
     </p>
 
     <p>
         <label>Email</label>
         <input type="text" asp-for="@Model.ApplicationUser.Email" class="form-control" />
+        <span asp-validation-for="ApplicationUser.Email" class="text-danger"></span>
     </p>
 
     <!-- Product -->
@@ -33,5 +35,24 @@
     <p>
         <button type="submit" class="btn btn-success form-control">Submit</button>
     </p>
+
+    <p>
+        <div asp-validation-summary="All"></div>
+    </p>
     
 </form>
+
+@section Scripts {
+    @{
+        <partial name = "_ValidationScriptsPartial" />
+    }
+
+        <script>
+            /* editor */
+            $(document).ready(function() {
+                $('.summernote').summernote({
+                    height: 200
+                });
+            });
+        </script>
+}
