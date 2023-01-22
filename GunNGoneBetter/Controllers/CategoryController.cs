@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GunNGoneBetter.Data;
 using GunNGoneBetter.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace GunNGoneBetter.Controllers
 {
+    [Authorize(Roles = PathManager.AdminRole)]
     public class CategoryController : Controller
     {
         private ApplicationDbContext db;

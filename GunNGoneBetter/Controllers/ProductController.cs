@@ -8,9 +8,11 @@ using GunNGoneBetter.Models.ViewModels;
 using System.Text.RegularExpressions;
 using System.IO;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GunNGoneBetter.Controllers
 {
+    [Authorize(Roles = PathManager.AdminRole)]
     public class ProductController : Controller
     {
         private ApplicationDbContext db;

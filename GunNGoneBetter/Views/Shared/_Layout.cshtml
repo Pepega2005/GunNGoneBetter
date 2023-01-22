@@ -34,28 +34,32 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Management
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
-                                </li>
-                                <li>
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="MyModel" asp-action="Index">MyModel</a>
-                                </li>
-                                <li>
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Product</a>
-                                </li>
 
-                                <div class="dropdown-divider"></div>
+                        @if (User.IsInRole(PathManager.AdminRole))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Management
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="MyModel" asp-action="Index">MyModel</a>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Index">Product</a>
+                                    </li>
 
-                                <li>
-                                    <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register Admin User</a>
-                                </li>
-                            </ul>
-                         </li>
+                                    <div class="dropdown-divider"></div>
+
+                                    <li>
+                                        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register Admin User</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
 
                          <li>
                              @if (HttpContextAccessor.HttpContext.Session.Get<List<Cart>>(PathManager.SessionCart) != null)

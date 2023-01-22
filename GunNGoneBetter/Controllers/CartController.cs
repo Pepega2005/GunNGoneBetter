@@ -3,6 +3,7 @@ using GunNGoneBetter.Models;
 using GunNGoneBetter.Models.ViewModels;
 using GunNGoneBetter.Utility;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -15,9 +16,16 @@ namespace GunNGoneBetter.Controllers
 
         ProductUserViewModel productUserVIewModel;
 
-        public CartController(ApplicationDbContext db)
+        IWebHostEnvironment webHostEnvironment;
+
+        IEmailSender emailSender;
+
+        public CartController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment,
+            IEmailSender emailSender)
         {
             this.db = db;
+            this.webHostEnvironment = webHostEnvironment;
+            this.emailSender = emailSender;
         }
 
         public IActionResult Index()
@@ -59,8 +67,49 @@ namespace GunNGoneBetter.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult InquiryConfirmation()
+        {
+            HttpContext.Session.Clear(); // полная очитка сессии
+
+
+            return View();
+        }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SummaryPost(ProductUserViewModel productUserViewModel)
+        {
+            // код для отправки сообщения
+            var path = webHostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString() +
+                    "templates" + Path.DirectorySeparatorChar.ToString() + "Inquiry.html";
+
+            var subject = "New Order";
+
+            string bodyHtml = "";
+
+            using (StreamReader reader = new StreamReader(path))
+            {
+                bodyHtml = reader.ReadToEnd();
+            }
+
+            string textProducts = "";
+            foreach (var item in productUserViewModel.ProductList)
+            {
+                textProducts += $"- Name: {item.Name}, ID: {item.Id}\n";
+            }
+
+            string body = string.Format(bodyHtml, productUserViewModel.ApplicationUser.FullName,
+                productUserViewModel.ApplicationUser.Email,
+                productUserViewModel.ApplicationUser.PhoneNumber,
+                textProducts
+                );
+
+            await emailSender.SendEmailAsync(productUserViewModel.ApplicationUser.Email, subject, body);
+            await emailSender.SendEmailAsync("elite.clone69@gmail.com", subject, body);
+
+            return RedirectToAction("InquiryConfirmation");
+        }
+
+        [HttpPost]
         public IActionResult Summary()
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -83,7 +132,7 @@ namespace GunNGoneBetter.Controllers
             productUserVIewModel = new ProductUserViewModel()
             {
                 ApplicationUser = db.ApplicationUser.FirstOrDefault(x => x.Id == claim.Value),
-                ProductList = productList
+                ProductList = productList.ToList()
             };
 
             return View(productUserVIewModel);
