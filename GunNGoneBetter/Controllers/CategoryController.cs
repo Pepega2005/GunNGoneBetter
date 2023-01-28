@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using GunNGoneBetter.Data;
-using GunNGoneBetter.Models;
+using GunNGoneBetter_DataMigrations;
+using GunNGoneBetter_Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using GunNGoneBetter_Utility;
 
 namespace GunNGoneBetter.Controllers
 {

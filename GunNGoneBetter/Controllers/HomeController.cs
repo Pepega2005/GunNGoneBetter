@@ -1,7 +1,7 @@
-﻿using GunNGoneBetter.Data;
-using GunNGoneBetter.Models;
-using GunNGoneBetter.Models.ViewModels;
-using GunNGoneBetter.Utility;
+﻿using GunNGoneBetter_DataMigrations;
+using GunNGoneBetter_Models;
+using GunNGoneBetter_Models.ViewModels;
+using GunNGoneBetter_Utility;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;

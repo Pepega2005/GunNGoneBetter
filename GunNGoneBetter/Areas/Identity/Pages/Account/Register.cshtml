@@ -1,8 +1,9 @@
 ﻿@page
 @model RegisterModel
+@using GunNGoneBetter_Utility
 
 
-@if (User.IsInRole(GunNGoneBetter.PathManager.AdminRole))
+@if (User.IsInRole(PathManager.AdminRole))
     {
         <h1>You can register admin account</h1>
     }
@@ -40,7 +41,7 @@
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
 
-            @if (User.IsInRole(GunNGoneBetter.PathManager.AdminRole))
+            @if (User.IsInRole(PathManager.AdminRole))
             {
                 <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-warning">
                     Register Admin User

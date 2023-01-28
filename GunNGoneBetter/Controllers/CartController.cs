@@ -1,7 +1,7 @@
-﻿using GunNGoneBetter.Data;
-using GunNGoneBetter.Models;
-using GunNGoneBetter.Models.ViewModels;
-using GunNGoneBetter.Utility;
+﻿using GunNGoneBetter_DataMigrations;
+using GunNGoneBetter_Models;
+using GunNGoneBetter_Models.ViewModels;
+using GunNGoneBetter_Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;

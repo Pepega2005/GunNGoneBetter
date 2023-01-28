@@ -1,14 +1,15 @@
-﻿using GunNGoneBetter.Data;
-using GunNGoneBetter.Models;
+﻿using GunNGoneBetter_DataMigrations;
+using GunNGoneBetter_Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using GunNGoneBetter.Models;
+using GunNGoneBetter_Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using GunNGoneBetter.Models.ViewModels;
+using GunNGoneBetter_Models.ViewModels;
 using System.Text.RegularExpressions;
 using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using GunNGoneBetter_Utility;
 
 namespace GunNGoneBetter.Controllers
 {

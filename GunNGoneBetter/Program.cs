@@ -1,5 +1,5 @@
-using GunNGoneBetter.Data;
-using GunNGoneBetter.Utility;
+using GunNGoneBetter_DataMigrations;
+using GunNGoneBetter_Utility;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
