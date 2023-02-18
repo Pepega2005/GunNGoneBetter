@@ -10,6 +10,7 @@ using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using GunNGoneBetter_Utility;
+using GunNGoneBetter_DataMigrations.Data;
 
 namespace GunNGoneBetter.Controllers
 {

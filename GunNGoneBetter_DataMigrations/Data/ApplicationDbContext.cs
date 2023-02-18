@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using GunNGoneBetter_Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
-namespace GunNGoneBetter_DataMigrations
+namespace GunNGoneBetter_DataMigrations.Data
 {
     public class ApplicationDbContext: IdentityDbContext // изменили наследование
     {

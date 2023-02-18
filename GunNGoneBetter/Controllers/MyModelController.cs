@@ -4,6 +4,7 @@ using GunNGoneBetter_Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using GunNGoneBetter_Utility;
+using GunNGoneBetter_DataMigrations.Data;
 
 namespace GunNGoneBetter.Controllers
 {

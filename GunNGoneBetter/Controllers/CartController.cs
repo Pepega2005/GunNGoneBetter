@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using GunNGoneBetter_DataMigrations.Data;
 
 namespace GunNGoneBetter.Controllers
 {

@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using GunNGoneBetter_DataMigrations.Data;
+
+using GunNGoneBetter_DataMigrations.Repository;
+using GunNGoneBetter_DataMigrations.Repository.IRepository;
 
 internal class Program
 {
@@ -37,6 +41,7 @@ internal class Program
 
         builder.Services.AddTransient<IEmailSender, EmailSender>(); // EMAIL SENDER
 
+        builder.Services.AddScoped<IRepositoryCategory, RepositoryCategory>();
 
         builder.Services.AddControllersWithViews(); // MVC
 

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Diagnostics;
+using GunNGoneBetter_DataMigrations.Data;
 
 namespace GunNGoneBetter.Controllers
 {

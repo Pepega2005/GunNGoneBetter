@@ -4,22 +4,25 @@ using GunNGoneBetter_Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 using GunNGoneBetter_Utility;
+using GunNGoneBetter_DataMigrations.Repository.IRepository;
 
 namespace GunNGoneBetter.Controllers
 {
     [Authorize(Roles = PathManager.AdminRole)]
     public class CategoryController : Controller
     {
-        private ApplicationDbContext db;
+        private IRepositoryCategory repositoryCategory;
 
-        public CategoryController(ApplicationDbContext db)
+        //private ApplicationDbContext db;
+
+        public CategoryController(IRepositoryCategory repositoryCategory)
         {
-            this.db = db;
+            this.repositoryCategory = repositoryCategory;
         }
 
         public IActionResult Index()
         {
-            IEnumerable<Category> categories = db.Category;
+            IEnumerable<Category> categories = repositoryCategory.GetAll();
 
             return View(categories);
         }
@@ -37,8 +40,8 @@ namespace GunNGoneBetter.Controllers
         {
             if (ModelState.IsValid) // проверка модели на валидность
             {
-                db.Category.Add(category);
-                db.SaveChanges();
+                repositoryCategory.Add(category);
+                repositoryCategory.Save();
 
                 return RedirectToAction("Index"); // переход на страницу категорий
             }
@@ -55,7 +58,8 @@ namespace GunNGoneBetter.Controllers
                 return NotFound();
             }
 
-            var category = db.Category.Find(id);
+            //var category = db.Category.Find(id);
+            var category = repositoryCategory.Find(id.GetValueOrDefault());
 
             if (category == null)
             {
@@ -72,8 +76,11 @@ namespace GunNGoneBetter.Controllers
         {
             if (ModelState.IsValid) // проверка модели на валидность
             {
-                db.Category.Update(category);
-                db.SaveChanges();
+                //db.Category.Update(category); // !!!
+                //db.SaveChanges();
+
+                repositoryCategory.Update(category);
+                repositoryCategory.Save();
 
                 return RedirectToAction("Index"); // переход на страницу категорий
             }
@@ -90,7 +97,8 @@ namespace GunNGoneBetter.Controllers
                 return NotFound();
             }
 
-            var category = db.Category.Find(id);
+            //var category = db.Category.Find(id);
+            var category = repositoryCategory.Find(id.GetValueOrDefault());
 
             if (category == null)
             {
@@ -105,15 +113,19 @@ namespace GunNGoneBetter.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePost(int? id)
         {
-            var category = db.Category.Find(id);
+            //var category = db.Category.Find(id);
+            var category = repositoryCategory.Find(id.GetValueOrDefault());
 
             if (category == null)
             {
                 return NotFound();
             }
 
-            db.Category.Remove(category);
-            db.SaveChanges();
+            //db.Category.Remove(category);
+            //db.SaveChanges();
+
+            repositoryCategory.Remove(category);
+            repositoryCategory.Save();
 
             return RedirectToAction("Index");
         }
