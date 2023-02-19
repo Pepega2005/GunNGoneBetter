@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GunNGoneBetter_Models\GunNGoneBetter_Models.csproj" />
+    <ProjectReference Include="..\GunNGoneBetter_Utility\GunNGoneBetter_Utility.csproj" />
   </ItemGroup>
 
 </Project>

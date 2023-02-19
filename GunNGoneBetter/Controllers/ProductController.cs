@@ -12,24 +12,29 @@ using Microsoft.AspNetCore.Authorization;
 using GunNGoneBetter_Utility;
 using GunNGoneBetter_DataMigrations.Data;
 
+using GunNGoneBetter_DataMigrations.Repository.IRepository;
+using GunNGoneBetter_DataMigrations.Repository;
+
 namespace GunNGoneBetter.Controllers
 {
     [Authorize(Roles = PathManager.AdminRole)]
     public class ProductController : Controller
     {
-        private ApplicationDbContext db;
+        //private ApplicationDbContext db;
+        private IRepositoryProduct repositoryProduct;
+
         private IWebHostEnvironment webHostEnvironment;
 
-        public ProductController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment)
+        public ProductController(IRepositoryProduct repositoryProduct, IWebHostEnvironment webHostEnvironment)
         {
-            this.db = db;
+            this.repositoryProduct = repositoryProduct;
             this.webHostEnvironment = webHostEnvironment;
         }
 
         // GET INDEX
         public IActionResult Index()
         {
-            IEnumerable<Product> objList = db.Product;
+            IEnumerable<Product> objList = repositoryProduct.GetAll();
 
             // получаем ссылки на сущности категорий
             /*foreach (var item in objList)
@@ -59,19 +64,9 @@ namespace GunNGoneBetter.Controllers
             ProductViewModel productViewModel = new ProductViewModel()
             {
                 Product = new Product(),
-                CategoriesList = db.Category.Select(x =>
-                new SelectListItem
-                {
-                    Text = x.Name,
-                    Value = x.Id.ToString()
-                }),
-                MyModelsList = db.MyModel.Select(x =>
-                new SelectListItem
-                {
-                    Text = x.Name,
-                    Value = x.Id.ToString()
-                })
-            };
+                CategoriesList = repositoryProduct.GetListItems(PathManager.NameCategory),
+                MyModelsList = repositoryProduct.GetListItems(PathManager.NameMyModel)
+        };
 
             if (id == null)
             {
@@ -81,7 +76,9 @@ namespace GunNGoneBetter.Controllers
             else
             {
                 // edit
-                productViewModel.Product = db.Product.Find(id);
+                //productViewModel.Product = db.Product.Find(id);
+                productViewModel.Product = repositoryProduct.Find(id.GetValueOrDefault());
+
                 if (productViewModel.Product == null)
                 {
                     return NotFound();
@@ -120,13 +117,14 @@ namespace GunNGoneBetter.Controllers
 
                 productViewModel.Product.Image = imageName + extension;
 
-                db.Product.Add(productViewModel.Product);
+                repositoryProduct.Add(productViewModel.Product);
             }
             else
             {
                 // update
                 // AsNoTracking() - important!!!
-                var product = db.Product.AsNoTracking().FirstOrDefault( u => u.Id == productViewModel.Product.Id);
+                // db.Product.AsNoTracking().FirstOrDefault( u => u.Id == productViewModel.Product.Id);
+                var product = repositoryProduct.FirstOrDefault(u => u.Id == productViewModel.Product.Id, isTracking: false);
 
                 if (files.Count > 0) // юзер загружает другой файл
                 {
@@ -155,10 +153,12 @@ namespace GunNGoneBetter.Controllers
                     productViewModel.Product.Image = product.Image; // оставляем имя прежним
                 }
 
-                db.Product.Update(productViewModel.Product);
+                //db.Product.Update(productViewModel.Product);
+                repositoryProduct.Update(productViewModel.Product);
             }
-            
-            db.SaveChanges();
+
+            //db.SaveChanges();
+            repositoryProduct.Save();
 
             return RedirectToAction("Index");
 
@@ -173,14 +173,15 @@ namespace GunNGoneBetter.Controllers
                 return NotFound();
             }
 
-            Product product = db.Product.Find(id);
+            Product product = repositoryProduct.FirstOrDefault
+                (x => x.Id == id, includeProperties: "Category,MyModel"); // ???
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            product.Category = db.Category.Find(product.CategoryId);
+            //product.Category = db.Category.Find(product.CategoryId);
 
             return View(product);
         }
@@ -197,7 +198,7 @@ namespace GunNGoneBetter.Controllers
                 return NotFound();
             }
 
-            Product product = db.Product.Find(id);
+            Product product = repositoryProduct.Find((int)id);
 
             var oldFile = upload + product.Image;
 
@@ -206,8 +207,8 @@ namespace GunNGoneBetter.Controllers
                 System.IO.File.Delete(oldFile);
             }
 
-            db.Product.Remove(product);
-            db.SaveChanges();
+            repositoryProduct.Remove(product);
+            repositoryProduct.Save();
 
             return RedirectToAction("Index");
         }

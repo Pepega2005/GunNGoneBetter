@@ -6,21 +6,25 @@ using System.Data;
 using GunNGoneBetter_Utility;
 using GunNGoneBetter_DataMigrations.Data;
 
+using GunNGoneBetter_DataMigrations.Repository.IRepository;
+using GunNGoneBetter_DataMigrations.Repository;
+
 namespace GunNGoneBetter.Controllers
 {
     [Authorize(Roles = PathManager.AdminRole)]
     public class MyModelController : Controller
     {
-        private ApplicationDbContext db;
+        //private ApplicationDbContext db;
+        private IRepositoryMyModel repositoryMyModel;
 
-        public MyModelController(ApplicationDbContext db)
+        public MyModelController(IRepositoryMyModel repositoryMyModel)
         {
-            this.db = db;
+            this.repositoryMyModel = repositoryMyModel;
         }
 
         public IActionResult Index()
         {
-            IEnumerable<MyModel> myModels = db.MyModel;
+            IEnumerable<MyModel> myModels = repositoryMyModel.GetAll();
 
             return View(myModels);
         }
@@ -38,8 +42,8 @@ namespace GunNGoneBetter.Controllers
         {
             if (ModelState.IsValid) // проверка модели на валидность
             {
-                db.MyModel.Add(myModel);
-                db.SaveChanges();
+                repositoryMyModel.Add(myModel);
+                repositoryMyModel.Save();
 
                 return RedirectToAction("Index");
             }
@@ -56,7 +60,7 @@ namespace GunNGoneBetter.Controllers
                 return NotFound();
             }
 
-            var model = db.MyModel.Find(id);
+            var model = repositoryMyModel.Find((int)id);
 
             if (model == null)
             {
@@ -73,8 +77,8 @@ namespace GunNGoneBetter.Controllers
         {
             if (ModelState.IsValid) // проверка модели на валидность
             {
-                db.MyModel.Update(model);
-                db.SaveChanges();
+                repositoryMyModel.Update(model);
+                repositoryMyModel.Save();
 
                 return RedirectToAction("Index"); // переход на страницу категорий
             }
@@ -91,7 +95,7 @@ namespace GunNGoneBetter.Controllers
                 return NotFound();
             }
 
-            var model = db.MyModel.Find(id);
+            var model = repositoryMyModel.Find((int)id);
 
             if (model == null)
             {
@@ -106,15 +110,15 @@ namespace GunNGoneBetter.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePost(int? id)
         {
-            var model = db.MyModel.Find(id);
+            var model = repositoryMyModel.Find((int)id);
 
             if (model == null)
             {
                 return NotFound();
             }
 
-            db.MyModel.Remove(model);
-            db.SaveChanges();
+            repositoryMyModel.Remove(model);
+            repositoryMyModel.Save();
 
             return RedirectToAction("Index");
         }
