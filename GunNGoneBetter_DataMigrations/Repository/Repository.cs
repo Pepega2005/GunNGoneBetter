@@ -48,7 +48,7 @@ namespace GunNGoneBetter_DataMigrations.Repository
             if (includeProperties != null)
             {
                 // LINQ Include
-                foreach (var item in includeProperties.Split())
+                foreach (var item in includeProperties.Split(','))
                 {
                     quiry = quiry.Include(item);
                 }
@@ -79,7 +79,7 @@ namespace GunNGoneBetter_DataMigrations.Repository
             if (includeProperties != null)
             {
                 // LINQ Include
-                foreach (var item in includeProperties.Split())
+                foreach (var item in includeProperties.Split(','))
                 {
                     quiry = quiry.Include(item);
                 }

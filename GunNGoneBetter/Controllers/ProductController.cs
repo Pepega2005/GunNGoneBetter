@@ -193,12 +193,12 @@ namespace GunNGoneBetter.Controllers
             string wwwRoot = webHostEnvironment.WebRootPath;
             string upload = wwwRoot + PathManager.ImageProductPath;
 
+            Product product = repositoryProduct.Find((id.GetValueOrDefault()));
+
             if (id == null || id == 0)
             {
                 return NotFound();
             }
-
-            Product product = repositoryProduct.Find((int)id);
 
             var oldFile = upload + product.Image;
 

@@ -8,25 +8,32 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Diagnostics;
 using GunNGoneBetter_DataMigrations.Data;
 
+using GunNGoneBetter_DataMigrations.Repository.IRepository;
+
 namespace GunNGoneBetter.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private ApplicationDbContext db;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext db)
+        //private ApplicationDbContext db;
+        private IRepositoryProduct repositoryProduct;
+        private IRepositoryCategory repositoryCategory;
+
+        public HomeController(ILogger<HomeController> logger, IRepositoryProduct repositoryProduct, IRepositoryCategory repositoryCategory)
         {
-            this.db = db;
             _logger = logger;
+            this.repositoryProduct = repositoryProduct;
+            this.repositoryCategory = repositoryCategory;
         }
 
         public IActionResult Index()
         {
             HomeViewModel homeViewModel = new HomeViewModel()
             {
-                Products = db.Product.Include(u => u.Category),
-                Categories = db.Category
+                Products = repositoryProduct.GetAll(includeProperties:
+                $"{PathManager.NameCategory},{PathManager.NameMyModel}"),
+                Categories = repositoryCategory.GetAll()
             };
 
             return View(homeViewModel);
@@ -46,8 +53,12 @@ namespace GunNGoneBetter.Controllers
             {
                 isInCart = false,
                 //Product = db.Product.Find(id)
-                Product = db.Product.Include(x => x.Category).
-                Where(x => x.Id == id).FirstOrDefault()
+                //Product = db.Product.Include(x => x.Category).Include(x => x.MyModel).
+                //Where(x => x.Id == id).FirstOrDefault()
+
+                Product = repositoryProduct.FirstOrDefault(
+                    filter: x => x.Id == id,
+                    includeProperties: $"{PathManager.NameCategory},{PathManager.NameMyModel}")
             };
 
             // проверка на наличие товара в корзине

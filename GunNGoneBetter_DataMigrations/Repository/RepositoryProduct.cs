@@ -43,7 +43,7 @@ namespace GunNGoneBetter_DataMigrations.Repository
 
         public void Update(Product obj)
         {
-            db.Product.Update(obj); // !!! CHECK !!!
+            db.Update(obj); // !!! CHECK !!!
         }
     }
 }
