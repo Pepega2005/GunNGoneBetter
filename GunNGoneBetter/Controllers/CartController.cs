@@ -7,13 +7,15 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using GunNGoneBetter_DataMigrations.Data;
+using GunNGoneBetter_DataMigrations.Repository.IRepository;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GunNGoneBetter.Controllers
 {
     [Authorize]
     public class CartController : Controller
     {
-        ApplicationDbContext db;
+        //ApplicationDbContext db;
 
         ProductUserViewModel productUserVIewModel;
 
@@ -21,12 +23,23 @@ namespace GunNGoneBetter.Controllers
 
         IEmailSender emailSender;
 
-        public CartController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment,
-            IEmailSender emailSender)
+        IRepositoryProduct repositoryProduct;
+        IRepositoryApplicationUser repositoryApplicationUser;
+
+        IRepositoryQueryHeader repositoryQueryHeader;
+        IRepositoryQueryDetail repositoryQueryDetail;
+
+        public CartController(IWebHostEnvironment webHostEnvironment,
+            IEmailSender emailSender, IRepositoryProduct repositoryProduct,
+            IRepositoryApplicationUser repositoryApplicationUser, IRepositoryQueryHeader repositoryQueryHeader,
+            IRepositoryQueryDetail repositoryQueryDetail)
         {
-            this.db = db;
             this.webHostEnvironment = webHostEnvironment;
             this.emailSender = emailSender;
+            this.repositoryApplicationUser = repositoryApplicationUser;
+            this.repositoryProduct = repositoryProduct;
+            this.repositoryQueryHeader = repositoryQueryHeader;
+            this.repositoryQueryDetail = repositoryQueryDetail;
         }
 
         public IActionResult Index()
@@ -45,7 +58,7 @@ namespace GunNGoneBetter.Controllers
             List<int> productsIdInCart = cartList.Select(x => x.ProductId).ToList();
 
             // извлекаем сами продукты по списку id
-            IEnumerable<Product> productList = db.Product.Where(x => productsIdInCart.Contains(x.Id));
+            IEnumerable<Product> productList = repositoryProduct.GetAll(x => productsIdInCart.Contains(x.Id));
 
             return View(productList);
         }
@@ -107,6 +120,41 @@ namespace GunNGoneBetter.Controllers
             await emailSender.SendEmailAsync(productUserViewModel.ApplicationUser.Email, subject, body);
             await emailSender.SendEmailAsync("elite.clone69@gmail.com", subject, body);
 
+            // добавление данных в БД по заказу
+
+            QueryHeader queryHeader = new QueryHeader()
+            {
+                ApplicationUserId = productUserViewModel.ApplicationUser.Id,
+                QueryTime = DateTime.Now,
+                FullName = productUserViewModel.ApplicationUser.FullName,
+                PhoneNumber = productUserViewModel.ApplicationUser.PhoneNumber,
+                Email = productUserViewModel.ApplicationUser.Email,
+                ApplicationUser = productUserViewModel.ApplicationUser
+            };
+
+            // получение юзера
+            //var claimsIdentity = (ClaimsIdentity)User.Identity;
+            //var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            //claim.Value -> getId
+
+            repositoryQueryHeader.Add(queryHeader);
+            repositoryQueryHeader.Save();
+
+            // сделать запись деталей - всех продуктов в БД
+            foreach (var item in productUserViewModel.ProductList)
+            {
+                QueryDetail queryDetail = new QueryDetail()
+                {
+                    ProductId = item.Id,
+                    QueryHeaderId = queryHeader.Id,
+                    QueryHeader = queryHeader,
+                    Product = repositoryProduct.Find(item.Id)
+                };
+
+                repositoryQueryDetail.Add(queryDetail);
+            }
+            repositoryQueryDetail.Save();
+
             return RedirectToAction("InquiryConfirmation");
         }
 
@@ -128,11 +176,11 @@ namespace GunNGoneBetter.Controllers
 
             List<int> productsIdInCart = cartList.Select(x => x.ProductId).ToList();
 
-            IEnumerable<Product> productList = db.Product.Where(x => productsIdInCart.Contains(x.Id));
+            IEnumerable<Product> productList = repositoryProduct.GetAll(x => productsIdInCart.Contains(x.Id));
 
             productUserVIewModel = new ProductUserViewModel()
             {
-                ApplicationUser = db.ApplicationUser.FirstOrDefault(x => x.Id == claim.Value),
+                ApplicationUser = repositoryApplicationUser.FirstOrDefault(x => x.Id == claim.Value),
                 ProductList = productList.ToList()
             };
 
