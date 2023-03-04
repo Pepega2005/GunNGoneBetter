@@ -17,6 +17,9 @@ namespace GunNGoneBetter.Controllers
         private IRepositoryQueryHeader repositoryQueryHeader;
         private IRepositoryQueryDetail repositoryQueryDetail;
 
+        [BindProperty]
+        public QueryViewModel QueryViewModel { get; set; }
+
         public QueryController(IRepositoryQueryHeader repositoryQueryHeader,
             IRepositoryQueryDetail repositoryQueryDetail)
         {
@@ -25,8 +28,30 @@ namespace GunNGoneBetter.Controllers
         }
 
         public IActionResult Index()
-        {
+        {           
             return View();
+        }
+
+        public IActionResult Details(int id)
+        {
+            QueryViewModel = new QueryViewModel()
+            {
+                // извлекаем хедер из репозитория
+                QueryHeader = repositoryQueryHeader.FirstOrDefault(x => x.Id == id),
+
+                QueryDetail = repositoryQueryDetail.
+                GetAll(x => x.QueryHeader.Id == id,
+                includeProperties: "Product")
+            };
+
+            return View(QueryViewModel);
+        }
+
+        public IActionResult GetQueryList()
+        {
+            JsonResult result = Json(new { data = repositoryQueryHeader.GetAll() });
+
+            return result;
         }
     }
 }
