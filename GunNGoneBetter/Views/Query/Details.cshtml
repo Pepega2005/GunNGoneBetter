@@ -2,6 +2,8 @@
 
 <form method="post">
 
+    <input hidden asp-for="QueryHeader.Id"/>
+
     <a asp-action="Index" class="btn form-control btn-success">Back to queries</a>
 
     <h2>Information</h2>
@@ -29,7 +31,8 @@
 
          <tr>
             <td><input type="submit" value="Change" class="btn btn-info form-control"/></td>
-            <td><input type="submit" value="Delete" class="btn btn-danger form-control"/></td>
+            
+            <td><input formaction="/Query/Delete" type="submit" value="Delete" class="btn btn-danger form-control"/></td>
         </tr>
     </table>
 
@@ -37,7 +40,10 @@
 
     <h2>Details</h2>
 
-    <h5>Product Name</h5>
-    <p>Price: 100$</p>
+    @foreach(var item in Model.QueryDetail)
+    {
+        <h5>Product Name: @item.Product.Name</h5>
+        <p>Price: @item.Product.Price $</p>
+    }
 
 </form>

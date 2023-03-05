@@ -105,6 +105,11 @@ namespace GunNGoneBetter_DataMigrations.Repository
             dbSet.Remove(item);
         }
 
+        public void Remove(IEnumerable<T> items)
+        {
+            dbSet.RemoveRange(items);
+        }
+
         public void Save()
         {
             db.SaveChanges();
