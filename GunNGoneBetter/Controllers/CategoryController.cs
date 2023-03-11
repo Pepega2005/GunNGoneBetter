@@ -43,10 +43,12 @@ namespace GunNGoneBetter.Controllers
                 repositoryCategory.Add(category);
                 repositoryCategory.Save();
 
-                TempData["Success"] = "OK!";
+                TempData[PathManager.Success] = "OK!";
 
                 return RedirectToAction("Index"); // переход на страницу категорий
             }
+
+            TempData[PathManager.Error] = "Error!";
 
             return View(category);
         }
@@ -128,6 +130,8 @@ namespace GunNGoneBetter.Controllers
 
             repositoryCategory.Remove(category);
             repositoryCategory.Save();
+
+            TempData[PathManager.Success] = "Deleted!";
 
             return RedirectToAction("Index");
         }

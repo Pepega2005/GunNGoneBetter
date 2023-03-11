@@ -8,12 +8,34 @@
 {
     <form method="post" asp-action="Summary">
 
-        @foreach (var item in Model)
-        {
-                <partial name="_ProductCartCard" model="item"/>
+        @{
+            double totalPriceProducts = 0;
         }
 
+        @for (int i = 0; i < Model.Count(); i++)
+        {
+            List<Product> items = Model.ToList();
+            <partial name="_ProductCartCard" model="items[i]"/>
+            totalPriceProducts += items[i].TempCount * items[i].Price;
+        }
 
+        <!--
+        @foreach (var item in Model)
+        {
+            <partial name="_ProductCartCard" model="item"/>
+            totalPriceProducts += item.TempCount * item.Price;
+        }-->
+
+        @if (User.IsInRole(GunNGoneBetter_Utility.PathManager.AdminRole))
+        {
+            <h2>Total: @totalPriceProducts</h2>
+        }
+
+        @if (User.IsInRole(GunNGoneBetter_Utility.PathManager.AdminRole))
+        {
+            <input type="submit" value="Update Cart" class="btn btn-info form-control"
+                asp-action="Update"/>
+        }
 
         <p>
             <button type="submit" class="btn btn-success">

@@ -5,6 +5,16 @@
 <div class="card filter" style="width: 18rem;">
   <img src="@PathManager.ImageProductPath@Model.Image" class="card-img-top" alt="...">
   <div class="card-body">
+    @if (User.IsInRole(PathManager.AdminRole))
+    {
+        <p>
+            <input type="text" asp-for="@Model.TempCount" class="form-control"/>
+        </p>
+
+        <p>
+            Total price: @(Model.TempCount * Model.Price)
+        </p>
+    }
     <h5 class="card-title">@Model.Name</h5>
     <p class="card-text">
             Description: @Model.ShortDescription
