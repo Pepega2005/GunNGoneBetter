@@ -26,17 +26,42 @@
 
     <!-- Product -->
 
+    @{
+        double totalPriceProducts = 0;
+    }
+
     @for (int i = 0; i < Model.ProductList.Count(); i++)
     {
          <input type="hidden" asp-for="@Model.ProductList[i].Id"/>
 
          <p>
-             Product Name : @Model.ProductList[i].Name
+             Product Name: @Model.ProductList[i].Name
          </p>
 
-         <p>
-             Price : @Model.ProductList[i].Price
-         </p>
+        @if (User.IsInRole(GunNGoneBetter_Utility.PathManager.AdminRole))
+        {
+            <p>
+                Count: @Model.ProductList[i].TempCount
+            </p>
+            <p>
+                Price: @(Model.ProductList[i].TempCount * Model.ProductList[i].Price)
+            </p>
+
+            totalPriceProducts += Model.ProductList[i].TempCount * Model.ProductList[i].Price;
+        }
+        else
+        {
+            <p>
+                Price per each: @Model.ProductList[i].Price
+            </p>
+        }
+    }
+
+    @if (User.IsInRole(GunNGoneBetter_Utility.PathManager.AdminRole))
+    {
+        <h3>
+            Total price products: @totalPriceProducts
+        </h3>
     }
 
 
@@ -52,7 +77,7 @@
 
 @section Scripts {
     @{
-        <partial name = "_ValidationScriptsPartial" />
+    <partial name = "_ValidationScriptsPartial" />
     }
 
         <script>

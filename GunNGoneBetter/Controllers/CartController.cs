@@ -17,7 +17,7 @@ namespace GunNGoneBetter.Controllers
     {
         //ApplicationDbContext db;
 
-        ProductUserViewModel productUserVIewModel;
+        ProductUserViewModel productUserViewModel;
 
         IWebHostEnvironment webHostEnvironment;
 
@@ -72,6 +72,22 @@ namespace GunNGoneBetter.Controllers
             }
 
             return View(productList);
+        }
+
+        [HttpPost]
+        [ActionName("Index")]
+        public IActionResult IndexPost(IEnumerable<Product> products)
+        {
+            List<Cart> carts = new List<Cart>();
+
+            foreach (var product in products)
+            {
+                carts.Add(new Cart() { ProductId = product.Id, Count = product.TempCount });
+            }
+
+            HttpContext.Session.Set(PathManager.SessionCart, carts);
+
+            return RedirectToAction("Summary");
         }
 
         public IActionResult Remove(int id)
@@ -177,10 +193,40 @@ namespace GunNGoneBetter.Controllers
         [HttpPost]
         public IActionResult Summary()
         {
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            ApplicationUser applicationUser;
 
-            // если ипользователь вошел в систему, то обьект будет определен
-            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            if (User.IsInRole(PathManager.AdminRole)) // работа админа в корзине
+            {
+                // корзина заполняется на основании существующего запроса
+                if (HttpContext.Session.Get<int>(PathManager.SessionQuery) != 0)
+                {
+                    // можем забрать данные из id запроса для юзера
+
+                    QueryHeader queryHeader = repositoryQueryHeader.FirstOrDefault(
+                        x => x.Id == HttpContext.Session.Get<int>(PathManager.SessionQuery));
+
+                    applicationUser = new ApplicationUser()
+                    {
+                        Email = queryHeader.Email,
+                        PhoneNumber = queryHeader.PhoneNumber,
+                        FullName = queryHeader.FullName
+                    };
+                }
+                else // корзина заполняется админом для юзера 
+                {
+                    applicationUser = new ApplicationUser();
+                }
+            }
+            else // работа юзера с корзиной 
+            {
+                var claimsIdentity = (ClaimsIdentity)User.Identity;
+
+                // если ипользователь вошел в систему, то обьект будет определен
+                var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+                applicationUser = repositoryApplicationUser.FirstOrDefault(
+                    x => x.Id == claim.Value);
+            }
 
             List<Cart> cartList = new List<Cart>();
 
@@ -194,17 +240,25 @@ namespace GunNGoneBetter.Controllers
 
             IEnumerable<Product> productList = repositoryProduct.GetAll(x => productsIdInCart.Contains(x.Id));
 
-            productUserVIewModel = new ProductUserViewModel()
+            productUserViewModel = new ProductUserViewModel()
             {
-                ApplicationUser = repositoryApplicationUser.FirstOrDefault(x => x.Id == claim.Value),
-                ProductList = productList.ToList()
+                ApplicationUser = applicationUser
             };
 
-            return View(productUserVIewModel);
+            foreach (var item in cartList)
+            {
+                Product product = repositoryProduct.FirstOrDefault(
+                    x => x.Id == item.ProductId);
+                product.TempCount = item.Count;
+
+                productUserViewModel.ProductList.Add(product);
+            }
+
+            return View(productUserViewModel);
         }
 
         [HttpPost]
-        public IActionResult Update(IEnumerable<Product> products)
+        public IActionResult Update(List<Product> products)
         {
             List<Cart> cartList = new List<Cart>();
 

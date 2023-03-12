@@ -1,5 +1,5 @@
 ﻿@using GunNGoneBetter_Models
-@model IEnumerable<Product>
+@model List<Product>
 
 <h1>Shopping Cart</h1>
 <p><a class="btn btn-primary" asp-controller="Home">Continue Shopping</a></p>
@@ -14,17 +14,10 @@
 
         @for (int i = 0; i < Model.Count(); i++)
         {
-            List<Product> items = Model.ToList();
-            <partial name="_ProductCartCard" model="items[i]"/>
-            totalPriceProducts += items[i].TempCount * items[i].Price;
+            <input hidden asp-for="@Model[i].Id"/>
+            <partial name="_ProductCartCard" model="Model[i]"/>
+            totalPriceProducts += Model[i].TempCount * Model[i].Price;
         }
-
-        <!--
-        @foreach (var item in Model)
-        {
-            <partial name="_ProductCartCard" model="item"/>
-            totalPriceProducts += item.TempCount * item.Price;
-        }-->
 
         @if (User.IsInRole(GunNGoneBetter_Utility.PathManager.AdminRole))
         {
@@ -34,7 +27,7 @@
         @if (User.IsInRole(GunNGoneBetter_Utility.PathManager.AdminRole))
         {
             <input type="submit" value="Update Cart" class="btn btn-info form-control"
-                asp-action="Update"/>
+                asp-action="Update" formmethod="post" name="Update"/>
         }
 
         <p>
