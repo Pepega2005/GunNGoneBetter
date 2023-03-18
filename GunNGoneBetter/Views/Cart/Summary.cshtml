@@ -15,14 +15,49 @@
 
     <p>
         <label>Phone</label>
-        <input type="text" asp-for="@Model.ApplicationUser.PhoneNumber" class="form-control" />
+        <input type="text" asp-for="@Model.ApplicationUser.PhoneNumber" required class="form-control" />
+        <span asp-validation-for="ApplicationUser.PhoneNumber" class="text-danger"></span>
     </p>
 
     <p>
         <label>Email</label>
-        <input type="text" asp-for="@Model.ApplicationUser.Email" class="form-control" />
+        <input type="text" asp-for="@Model.ApplicationUser.Email" required class="form-control" />
         <span asp-validation-for="ApplicationUser.Email" class="text-danger"></span>
     </p>
+
+    <!-- Admin for user -->
+    @if(User.IsInRole(GunNGoneBetter_Utility.PathManager.AdminRole))
+    {
+        <p>
+            <label>City</label>
+            <input type="text" asp-for="@Model.ApplicationUser.City" class="form-control" />
+            <span asp-validation-for="ApplicationUser.City" class="text-danger"></span>
+        </p>
+
+        <p>
+            <label>Street</label>
+            <input type="text" asp-for="@Model.ApplicationUser.Street" class="form-control" />
+            <span asp-validation-for="ApplicationUser.Street" class="text-danger"></span>
+        </p>
+
+        <p>
+            <label>House</label>
+            <input type="text" asp-for="@Model.ApplicationUser.House" class="form-control" />
+            <span asp-validation-for="ApplicationUser.House" class="text-danger"></span>
+        </p>
+
+        <p>
+            <label>Apartment</label>
+            <input type="text" asp-for="@Model.ApplicationUser.Apartment" class="form-control" />
+            <span asp-validation-for="ApplicationUser.Apartment" class="text-danger"></span>
+        </p>
+
+        <p>
+            <label>PostalCode</label>
+            <input type="text" asp-for="@Model.ApplicationUser.PostalCode" class="form-control" />
+            <span asp-validation-for="ApplicationUser.PostalCode" class="text-danger"></span>
+        </p>
+    }
 
     <!-- Product -->
 
@@ -64,10 +99,20 @@
         </h3>
     }
 
+    @if (User.IsInRole(GunNGoneBetter_Utility.PathManager.AdminRole))
+    {
+        <p>
+            <button type="submit" class="btn btn-primary form-control">Submit Order</button>
+        </p>
+    }
+    else
+    {
+        <p>
+            <button type="submit" class="btn btn-success form-control">Submit</button>
+        </p>
+    }
 
-    <p>
-        <button type="submit" class="btn btn-success form-control">Submit</button>
-    </p>
+    
 
     <p>
         <div asp-validation-summary="All"></div>

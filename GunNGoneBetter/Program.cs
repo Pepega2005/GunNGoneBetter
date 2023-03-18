@@ -47,6 +47,8 @@ internal class Program
         builder.Services.AddScoped<IRepositoryQueryHeader, RepositoryQueryHeader>();
         builder.Services.AddScoped<IRepositoryQueryDetail, RepositoryQueryDetail>();
         builder.Services.AddScoped<IRepositoryApplicationUser, RepositoryApplicationUser>();
+        builder.Services.AddScoped<IRepositoryOrderHeader, RepositoryOrderHeader>();
+        builder.Services.AddScoped<IRepositoryOrderDetail, RepositoryOrderDetail>();
 
         builder.Services.AddControllersWithViews(); // MVC
 
