@@ -8,6 +8,7 @@ using GunNGoneBetter_DataMigrations.Data;
 
 using GunNGoneBetter_DataMigrations.Repository;
 using GunNGoneBetter_DataMigrations.Repository.IRepository;
+using GunNGoneBetter_Utility.BrainTree;
 
 internal class Program
 {
@@ -40,6 +41,8 @@ internal class Program
             AddEntityFrameworkStores<ApplicationDbContext>();
 
         builder.Services.AddTransient<IEmailSender, EmailSender>(); // EMAIL SENDER
+
+        builder.Services.Configure<SettingsBrainTree>(builder.Configuration.GetSection("BrainTree"));
 
         builder.Services.AddScoped<IRepositoryCategory, RepositoryCategory>();
         builder.Services.AddScoped<IRepositoryMyModel, RepositoryMyModel>();

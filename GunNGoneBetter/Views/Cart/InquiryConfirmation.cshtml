@@ -1,5 +1,16 @@
-﻿<div class="text-center">
+﻿@model GunNGoneBetter_Models.OrderHeader
+
+<div class="text-center">
     <h1>Information</h1>
+
+    @if (Model != null) // order
+    {
+        <h2>Order was created</h2>
+    }
+    else
+    {
+        <h2>Query was created</h2>
+    }
 
     <p>Email sent</p>
 </div>

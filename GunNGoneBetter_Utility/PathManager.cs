@@ -14,5 +14,9 @@
 
         public const string Success = "Success";
         public const string Error = "Error";
+
+        public const string StatusPending = "Pending"; // в ожидании
+        public const string StatusAccepted = "Accepted"; // утвержден
+        public const string StatusDenied = "Denied"; // отменен
     }
 }
