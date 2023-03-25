@@ -8,7 +8,7 @@
     @if (User.IsInRole(PathManager.AdminRole))
     {
         <p>
-            <input type="text" asp-for="@Model.TempCount" class="form-control"/>
+            <input type="number" asp-for="@Model.TempCount" class="form-control"/>
         </p>
 
         <p>

@@ -41,6 +41,7 @@ internal class Program
             AddEntityFrameworkStores<ApplicationDbContext>();
 
         builder.Services.AddTransient<IEmailSender, EmailSender>(); // EMAIL SENDER
+        builder.Services.AddSingleton<IBrainTreeBridge, BrainTreeBridge>();
 
         builder.Services.Configure<SettingsBrainTree>(builder.Configuration.GetSection("BrainTree"));
 

@@ -9,6 +9,8 @@ using System.Security.Claims;
 using GunNGoneBetter_DataMigrations.Data;
 using GunNGoneBetter_DataMigrations.Repository.IRepository;
 using System.ComponentModel.DataAnnotations.Schema;
+using GunNGoneBetter_Utility.BrainTree;
+using Braintree;
 
 namespace GunNGoneBetter.Controllers
 {
@@ -32,10 +34,13 @@ namespace GunNGoneBetter.Controllers
         IRepositoryOrderHeader repositoryOrderHeader;
         IRepositoryOrderDetail repositoryOrderDetail;
 
+        IBrainTreeBridge brainTreeBridge;
+
         public CartController(IWebHostEnvironment webHostEnvironment,
             IEmailSender emailSender, IRepositoryProduct repositoryProduct,
             IRepositoryApplicationUser repositoryApplicationUser, IRepositoryQueryHeader repositoryQueryHeader,
-            IRepositoryQueryDetail repositoryQueryDetail, IRepositoryOrderHeader repositoryOrderHeader, IRepositoryOrderDetail repositoryOrderDetail)
+            IRepositoryQueryDetail repositoryQueryDetail, IRepositoryOrderHeader repositoryOrderHeader, IRepositoryOrderDetail repositoryOrderDetail,
+            IBrainTreeBridge brainTreeBridge)
         {
             this.webHostEnvironment = webHostEnvironment;
             this.emailSender = emailSender;
@@ -45,6 +50,7 @@ namespace GunNGoneBetter.Controllers
             this.repositoryQueryDetail = repositoryQueryDetail;
             this.repositoryOrderHeader = repositoryOrderHeader;
             this.repositoryOrderDetail = repositoryOrderDetail;
+            this.brainTreeBridge = brainTreeBridge;
         }
 
         public IActionResult Index()
@@ -124,7 +130,8 @@ namespace GunNGoneBetter.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SummaryPost(ProductUserViewModel productUserViewModel)
+        public async Task<IActionResult> SummaryPost(IFormCollection collection, 
+            ProductUserViewModel productUserViewModel)
         {
             // work with user
             var identityClaims = (ClaimsIdentity)User.Identity;
@@ -173,6 +180,25 @@ namespace GunNGoneBetter.Controllers
                 }
 
                 repositoryOrderDetail.Save();
+
+
+                string nonce = collection["payment_method_nonce"];
+
+                var request = new TransactionRequest
+                {
+                    Amount = 1,
+                    PaymentMethodNonce = nonce,
+                    OrderId = "1",
+                    Options = new TransactionOptionsRequest { SubmitForSettlement = true } // auto confirmations
+                };
+
+                var getway = brainTreeBridge.GetGateway();
+
+                var resultTransaction = getway.Transaction.Sale(request);
+
+                var id = resultTransaction.Target.Id;
+                var status = resultTransaction.Target.ProcessorResponseText;
+
 
                 return RedirectToAction("InquiryConfirmation", new { Id = orderHeader.Id });
             }
@@ -273,6 +299,11 @@ namespace GunNGoneBetter.Controllers
                 {
                     applicationUser = new ApplicationUser();
                 }
+
+                // РАБОТА С ОПЛАТОЙ
+                var gateway = brainTreeBridge.GetGateway();
+                var tokenClient = gateway.ClientToken.Generate();
+                ViewBag.TokenClient = tokenClient;
             }
             else // работа юзера с корзиной 
             {
