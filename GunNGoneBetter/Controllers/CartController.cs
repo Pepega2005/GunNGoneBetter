@@ -152,7 +152,7 @@ namespace GunNGoneBetter.Controllers
                     AdminId = claim.Value,
                     DateOrder = DateTime.Now,
                     TotalPrice = 0,
-                    Status = "",
+                    Status = PathManager.StatusPending,
                     FullName = productUserViewModel.ApplicationUser.FullName,
                     Email = productUserViewModel.ApplicationUser.Email,
                     Phone = productUserViewModel.ApplicationUser.PhoneNumber,
@@ -362,6 +362,13 @@ namespace GunNGoneBetter.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        public IActionResult Clear()
+        {
+            HttpContext.Session.Clear();
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }
