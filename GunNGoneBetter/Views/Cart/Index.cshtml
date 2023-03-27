@@ -13,12 +13,41 @@
             double totalPriceProducts = 0;
         }
 
+        <div class="row row-cols-1 row-cols-md-2 g-4">
         @for (int i = 0; i < Model.Count(); i++)
         {
             <input hidden asp-for="@Model[i].Id"/>
-            <partial name="_ProductCartCard" model="Model[i]"/>
+
+            //<partial name="_ProductCartCard" model="Model[i]"/>
+
+            <div class="card filter border-info" style="width: 18rem; margin-left: 5px">
+                <img src="@GunNGoneBetter_Utility.PathManager.ImageProductPath@Model[i].Image" class="card-img-top" alt="...">
+                <div class="card-body">
+                    @if (User.IsInRole(GunNGoneBetter_Utility.PathManager.AdminRole))
+                    {
+                        <p>
+                             <input type="number" asp-for="@Model[i].TempCount" class="form-control"/>
+                        </p>
+
+                        <p>
+                             Total price: @(Model[i].TempCount * Model[i].Price)
+                        </p>
+                    }
+                    <h5 class="card-title">@Model[i].Name</h5>
+                    <p class="card-text">
+                        Description: @Model[i].ShortDescription
+                    </p>
+                    <p class="card-text">
+                        Price: @Model[i].Price
+                    </p>
+                    <span class="badge text-bg-primary">Primary</span>
+                    <a asp-action="Remove" asp-route-id="@Model[i].Id" class="btn btn-danger">TRASH</a>
+                </div>
+            </div>
+
             totalPriceProducts += Model[i].TempCount * Model[i].Price;
         }
+        </div>
 
         @if (User.IsInRole(GunNGoneBetter_Utility.PathManager.AdminRole))
         {
