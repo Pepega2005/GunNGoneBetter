@@ -151,7 +151,7 @@ namespace GunNGoneBetter.Controllers
                 {
                     AdminId = claim.Value,
                     DateOrder = DateTime.Now,
-                    TotalPrice = 0,
+                    TotalPrice = productUserViewModel.ProductList.Sum(x => x.Price * x.TempCount),
                     Status = PathManager.StatusPending,
                     FullName = productUserViewModel.ApplicationUser.FullName,
                     Email = productUserViewModel.ApplicationUser.Email,
@@ -161,6 +161,7 @@ namespace GunNGoneBetter.Controllers
                     House = productUserViewModel.ApplicationUser.House,
                     Apartment = productUserViewModel.ApplicationUser.Apartment,
                     PostalCode = productUserViewModel.ApplicationUser.PostalCode,
+                    TransactionId = " "
                 };
 
                 repositoryOrderHeader.Add(orderHeader);

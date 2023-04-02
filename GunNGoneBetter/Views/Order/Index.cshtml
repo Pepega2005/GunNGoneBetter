@@ -4,12 +4,26 @@
 
 <form method="get">
     <div class="row" style="padding: 5px">
-        <div class="col-4">
+        <div class="col-2">
             @Html.Editor("searchName", new { htmlAttributes = new {@class = "form-control", @placeholder = "Input Name"}})
         </div>
 
-        <div class="col-4">
+        <div class="col-2">
             @Html.Editor("searchEmail", new { htmlAttributes = new {@class = "form-control", @placeholder = "Input Email"}})
+        </div>
+
+        <div class="col-2">
+            @Html.Editor("searchPhone", new { htmlAttributes = new {@class = "form-control", @placeholder = "Input Phone"}})
+        </div>
+
+        <div class="col-2">
+            @Html.DropDownListFor(x => x.Status, Model.StatusList, "Choose Status", new {@class = "form-control"})
+        </div>
+
+        <div class="col-4">
+            <button type="submit" class="btn-info form-control">
+                Search
+            </button>
         </div>
     </div>
 </form>
@@ -29,7 +43,7 @@
                 <e-grid-column field="DateOrder" headerText="Data Order" customFormat="@(new {type = "date", format = "dd.MM.yyyy"})"></e-grid-column>
            
                 <e-grid-column field="Id" headerText=""
-                template="<a href = 'Order/Deatils/${Id}' class = 'btn btn-primary'> Go </a>"></e-grid-column>
+                template="<a href = 'Order/Details/${Id}' class = 'btn btn-primary'> Go </a>"></e-grid-column>
             </e-grid-columns>
         </ejs-grid>
 </div>

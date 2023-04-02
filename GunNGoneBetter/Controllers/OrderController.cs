@@ -13,24 +13,29 @@ using GunNGoneBetter_Utility.BrainTree;
 using Braintree;
 using System.Diagnostics.Contracts;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using GunNGoneBetter_DataMigrations.Repository;
 
 namespace GunNGoneBetter.Controllers
 {
     public class OrderController : Controller
     {
         IRepositoryOrderHeader repositoryOrderHeader;
-        IRepositoryQueryDetail repositoryQueryDetail;
+        IRepositoryOrderDetail repositoryOrderDetail;
         IBrainTreeBridge brainTreeBridge;
 
+        [BindProperty]
+        public OrderHeaderDetailViewModel OrderViewModel { get; set; }
+
         public OrderController(IRepositoryOrderHeader repositoryOrderHeader,
-            IRepositoryQueryDetail repositoryQueryDetail, IBrainTreeBridge brainTreeBridge)
+            IRepositoryOrderDetail repositoryOrderDetail, IBrainTreeBridge brainTreeBridge)
         {
             this.repositoryOrderHeader = repositoryOrderHeader;
-            this.repositoryQueryDetail = repositoryQueryDetail;
+            this.repositoryOrderDetail = repositoryOrderDetail;
             this.brainTreeBridge = brainTreeBridge;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string searchName = null, string searchEmail = null,
+            string searchPhone = null, string status = null)
         {
             OrderViewModel viewModel = new OrderViewModel()
             {
@@ -39,8 +44,68 @@ namespace GunNGoneBetter.Controllers
                 Select(x => new SelectListItem { Text = x, Value = x }),
             };
 
+            if (searchName != null)
+            {
+                viewModel.OrderHeaderList = viewModel.OrderHeaderList.
+                    Where(x => x.FullName.ToLower().Contains(searchName.ToLower()));
+            }
+
+            if (searchEmail != null)
+            {
+                viewModel.OrderHeaderList = viewModel.OrderHeaderList.
+                    Where(x => x.Email.ToLower().Contains(searchEmail.ToLower()));
+            }
+
+            if (searchPhone != null)
+            {
+                viewModel.OrderHeaderList = viewModel.OrderHeaderList.
+                    Where(x => x.Phone.Contains(searchPhone));
+            }
+
+            if (status != "Choose Status" && status != null)
+            {
+                viewModel.OrderHeaderList = viewModel.OrderHeaderList.
+                    Where(x => x.Status.Contains(status));
+            }
 
             return View(viewModel);
+        }
+
+        public IActionResult Details(int id)
+        {
+            OrderViewModel = new OrderHeaderDetailViewModel()
+            {
+                OrderHeader = repositoryOrderHeader.FirstOrDefault(x => x.Id == id),
+                OrderDetail = repositoryOrderDetail.GetAll(x => x.OrderHeaderId == id, includeProperties: "Product")
+            };
+
+            return View(OrderViewModel);
+        }
+
+        [HttpPost]
+        public IActionResult StartInProcessing()
+        {
+            var model = OrderViewModel;
+
+            OrderHeader orderHeader = repositoryOrderHeader.
+                FirstOrDefault(x => x.Id == OrderViewModel.OrderHeader.Id);
+
+            orderHeader.Status = PathManager.StatusInProcess;
+            repositoryOrderHeader.Save();
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult StartOrderDone()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult StartOrderCancel()
+        {
+            return View();
         }
     }
 }

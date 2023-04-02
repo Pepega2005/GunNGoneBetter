@@ -42,5 +42,9 @@ namespace GunNGoneBetter_Models
         public string Apartment { get; set; }
         [Required]
         public string PostalCode { get; set; }
+
+        public string TransactionId { get; set; }
+
+        public DateTime DateExecution { get; set; }
     }
 }

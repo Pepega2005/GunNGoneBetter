@@ -18,8 +18,9 @@
         public const string StatusPending = "Pending"; // в ожидании
         public const string StatusAccepted = "Accepted"; // утвержден
         public const string StatusDenied = "Denied"; // отменен
+        public const string StatusInProcess = "In Process"; // в процессе обработки
 
         public static IEnumerable<string> StatusList =
-            new List<string>() { StatusPending, StatusAccepted, StatusDenied };
+            new List<string>() { StatusPending, StatusAccepted, StatusInProcess, StatusDenied };
     }
 }
