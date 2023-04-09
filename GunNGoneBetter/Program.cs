@@ -39,6 +39,11 @@ internal class Program
         builder.Services.AddIdentity<IdentityUser, IdentityRole>().
             AddDefaultUI().AddDefaultTokenProviders().
             AddEntityFrameworkStores<ApplicationDbContext>();
+        builder.Services.AddAuthentication().AddGoogle(googleOptions =>
+        {
+            googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+            googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+        });
 
         builder.Services.AddTransient<IEmailSender, EmailSender>(); // EMAIL SENDER
         builder.Services.AddSingleton<IBrainTreeBridge, BrainTreeBridge>();

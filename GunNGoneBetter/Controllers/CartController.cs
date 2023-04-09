@@ -200,6 +200,10 @@ namespace GunNGoneBetter.Controllers
                 var id = resultTransaction.Target.Id;
                 var status = resultTransaction.Target.ProcessorResponseText;
 
+                // orderHeader
+
+                orderHeader.TransactionId = id;
+                repositoryOrderHeader.Save();
 
                 return RedirectToAction("InquiryConfirmation", new { Id = orderHeader.Id });
             }

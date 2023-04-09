@@ -151,23 +151,34 @@
                 </div>
 
                 <!-- BUTTONS -->
-                <div class="row m-2">
-                    <div class="col-sm">
-                       <input asp-action="StartInProcessing" type="submit" value="In Processing" class="btn form-control btn-primary"/>
-                    </div>
-                </div>
 
-                <div class="row m-2">
-                    <div class="col-sm">
-                       <input type="submit" value="Order Done" class="btn form-control btn-primary"/>
+                @if (Model.OrderHeader.Status == GunNGoneBetter_Utility.PathManager.StatusAccepted)
+                {
+                    <div class="row m-2">
+                        <div class="col-sm">
+                        <input asp-action="StartInProcessing" type="submit" value="In Processing" class="btn form-control btn-primary"/>
+                        </div>
                     </div>
-                </div>
+                }
 
-                <div class="row m-2">
-                    <div class="col-sm">
-                       <input type="submit" value="Cancel Order" class="btn form-control btn-primary"/>
+                @if (Model.OrderHeader.Status == GunNGoneBetter_Utility.PathManager.StatusInProcess)
+                {
+                    <div class="row m-2">
+                        <div class="col-sm">
+                           <input asp-action="StartOrderDone" type="submit" value="Order Done" class="btn form-control btn-primary"/>
+                        </div>
                     </div>
-                </div>
+                }
+
+                @if (Model.OrderHeader.Status != GunNGoneBetter_Utility.PathManager.StatusDenied)
+                {
+                    <div class="row m-2">
+                        <div class="col-sm">
+                            <input asp-action="StartOrderCancel" type="submit" value="Cancel Order" class="btn form-control btn-primary"/>
+                        </div>
+                    </div>
+                }
+
             </div>
         </div>
 

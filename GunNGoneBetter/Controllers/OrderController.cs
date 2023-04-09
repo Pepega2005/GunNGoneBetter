@@ -99,13 +99,41 @@ namespace GunNGoneBetter.Controllers
         [HttpPost]
         public IActionResult StartOrderDone()
         {
-            return View();
+            OrderHeader orderHeader = repositoryOrderHeader.
+                FirstOrDefault(x => x.Id == OrderViewModel.OrderHeader.Id);
+
+            orderHeader.Status = PathManager.StatusOrderDone;
+            repositoryOrderHeader.Save();
+
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
         public IActionResult StartOrderCancel()
         {
-            return View();
+            OrderHeader orderHeader = repositoryOrderHeader.
+                FirstOrDefault(x => x.Id == OrderViewModel.OrderHeader.Id);
+
+            var gateway = brainTreeBridge.GetGateway();
+
+            // get transaction
+            Transaction transaction = gateway.Transaction.Find(orderHeader.TransactionId);
+
+            // условия при которых не возвращаем
+            if (transaction.Status == TransactionStatus.AUTHORIZED ||
+                transaction.Status == TransactionStatus.SUBMITTED_FOR_SETTLEMENT)
+            {
+                var res = gateway.Transaction.Void(orderHeader.TransactionId);
+            }
+            else // возврат средств
+            {
+                var res = gateway.Transaction.Refund(orderHeader.TransactionId);
+            }
+
+            orderHeader.Status = PathManager.StatusDenied;
+            repositoryOrderHeader.Save();
+
+            return RedirectToAction("Index");
         }
     }
 }
