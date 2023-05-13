@@ -49,6 +49,11 @@ internal class Program
             facebookOptions.AppId = builder.Configuration["Authentication:Facebook:AppId"];
             facebookOptions.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
         });
+        builder.Services.AddAuthentication().AddMicrosoftAccount(microsoftOptions =>
+        {
+            microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"];
+            microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"];
+        });
 
         builder.Services.AddTransient<IEmailSender, EmailSender>(); // EMAIL SENDER
         builder.Services.AddSingleton<IBrainTreeBridge, BrainTreeBridge>();
