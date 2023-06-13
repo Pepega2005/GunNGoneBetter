@@ -1,0 +1,11 @@
+services:
+  app:
+    image: gun_n_gone_better
+    restart: always
+    ports:
+      - 5000:5000
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
