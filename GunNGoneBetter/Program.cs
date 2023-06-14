@@ -29,7 +29,7 @@ internal class Program
 
         builder.Services.AddDbContext<ApplicationDbContext>(
             options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+            options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
         );
 
         // ��� �������������� ��������� ������ � ��
