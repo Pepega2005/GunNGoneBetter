@@ -4,8 +4,12 @@ services:
     restart: always
     ports:
       - 5000:5000
+    volumes:
+      - ./images/product:/app/release/wwwroot/images/product
   db:
     image: postgres
     restart: always
     environment:
       POSTGRES_PASSWORD: example
+    volumes:
+      - ./data:/var/lib/postgresql/data

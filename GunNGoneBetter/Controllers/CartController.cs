@@ -11,6 +11,7 @@ using GunNGoneBetter_DataMigrations.Repository.IRepository;
 using System.ComponentModel.DataAnnotations.Schema;
 using GunNGoneBetter_Utility.BrainTree;
 using Braintree;
+using System.Linq.Dynamic;
 
 namespace GunNGoneBetter.Controllers
 {
@@ -150,7 +151,7 @@ namespace GunNGoneBetter.Controllers
                 OrderHeader orderHeader = new OrderHeader()
                 {
                     AdminId = claim.Value,
-                    DateOrder = DateTime.Now,
+                    DateOrder = DateTime.UtcNow,
                     TotalPrice = productUserViewModel.ProductList.Sum(x => x.Price * x.TempCount),
                     Status = PathManager.StatusPending,
                     FullName = productUserViewModel.ApplicationUser.FullName,
@@ -163,25 +164,6 @@ namespace GunNGoneBetter.Controllers
                     PostalCode = productUserViewModel.ApplicationUser.PostalCode,
                     TransactionId = " "
                 };
-
-                repositoryOrderHeader.Add(orderHeader);
-                repositoryOrderHeader.Save();
-
-                foreach (var product in productUserViewModel.ProductList)
-                {
-                    OrderDetail orderDetail = new OrderDetail()
-                    {
-                        OrderHeaderId = orderHeader.Id,
-                        ProductId = product.Id,
-                        Count = product.TempCount,
-                        PricePerUnit = (int)product.Price // !!! add new migration (has to be double)
-                    };
-
-                    repositoryOrderDetail.Add(orderDetail);
-                }
-
-                repositoryOrderDetail.Save();
-
 
                 string nonce = collection["payment_method_nonce"];
 
@@ -203,7 +185,24 @@ namespace GunNGoneBetter.Controllers
                 // orderHeader
 
                 orderHeader.TransactionId = id;
+
+                repositoryOrderHeader.Add(orderHeader);
                 repositoryOrderHeader.Save();
+
+                foreach (var product in productUserViewModel.ProductList)
+                {
+                    OrderDetail orderDetail = new OrderDetail()
+                    {
+                        OrderHeaderId = orderHeader.Id,
+                        ProductId = product.Id,
+                        Count = product.TempCount,
+                        PricePerUnit = (int)product.Price // !!! add new migration (has to be double)
+                    };
+
+                    repositoryOrderDetail.Add(orderDetail);
+                }
+
+                repositoryOrderDetail.Save();
 
                 return RedirectToAction("InquiryConfirmation", new { Id = orderHeader.Id });
             }
@@ -244,7 +243,7 @@ namespace GunNGoneBetter.Controllers
                 QueryHeader queryHeader = new QueryHeader()
                 {
                     ApplicationUserId = claim.Value,
-                    QueryTime = DateTime.Now,
+                    QueryTime = DateTime.UtcNow,
                     FullName = productUserViewModel.ApplicationUser.FullName,
                     PhoneNumber = productUserViewModel.ApplicationUser.PhoneNumber,
                     Email = productUserViewModel.ApplicationUser.Email,

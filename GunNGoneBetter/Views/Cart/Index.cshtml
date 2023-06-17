@@ -2,7 +2,6 @@
 @model List<Product>
 
 <h1>Shopping Cart</h1>
-<p><a class="btn btn-danger" asp-action="Clear">Clear</a></p>
 <p><a class="btn btn-primary" asp-controller="Home">Continue Shopping</a></p>
 
 @if (Model.Count() > 0)
@@ -14,9 +13,9 @@
         }
 
         <div class="row row-cols-1 row-cols-md-2 g-4">
-        @for (int i = 0; i < Model.Count(); i++)
+            @for (int i = 0; i < Model.Count(); i++)
         {
-            <input hidden asp-for="@Model[i].Id"/>
+            <input hidden asp-for="@Model[i].Id" />
 
             //<partial name="_ProductCartCard" model="Model[i]"/>
 
@@ -25,13 +24,13 @@
                 <div class="card-body">
                     @if (User.IsInRole(GunNGoneBetter_Utility.PathManager.AdminRole))
                     {
-                        <p>
-                             <input type="number" asp-for="@Model[i].TempCount" class="form-control"/>
-                        </p>
+                    <p>
+                        <input type="number" asp-for="@Model[i].TempCount" class="form-control" />
+                    </p>
 
-                        <p>
-                             Total price: @(Model[i].TempCount * Model[i].Price)
-                        </p>
+                    <p>
+                        Total price: @(Model[i].TempCount * Model[i].Price)
+                    </p>
                     }
                     <h5 class="card-title">@Model[i].Name</h5>
                     <p class="card-text">
@@ -51,13 +50,13 @@
 
         @if (User.IsInRole(GunNGoneBetter_Utility.PathManager.AdminRole))
         {
-            <h2>Total: @totalPriceProducts</h2>
+        <h2>Total: @totalPriceProducts</h2>
         }
 
         @if (User.IsInRole(GunNGoneBetter_Utility.PathManager.AdminRole))
         {
-            <input type="submit" value="Update Cart" class="btn btn-info"
-                asp-action="Update" formmethod="post" name="Update"/>
+        <input type="submit" value="Update Cart" class="btn btn-info"
+               asp-action="Update" formmethod="post" name="Update" />
         }
 
         <p>
@@ -65,6 +64,8 @@
                 Continue
             </button>
         </p>
+
+        <p><a class="btn btn-danger" asp-action="Clear">Clear</a></p>
     </form>
 }
 else

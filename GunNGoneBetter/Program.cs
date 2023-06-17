@@ -41,18 +41,13 @@ internal class Program
             AddEntityFrameworkStores<ApplicationDbContext>();
         builder.Services.AddAuthentication().AddGoogle(googleOptions =>
         {
-            googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-            googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+            googleOptions.ClientId = "688495193498-leb4nvgkoj4quj7dqd62ng91v704vkr3.apps.googleusercontent.com";
+            googleOptions.ClientSecret = "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";
         });
         builder.Services.AddAuthentication().AddFacebook(facebookOptions =>
         {
-            facebookOptions.AppId = builder.Configuration["Authentication:Facebook:AppId"];
-            facebookOptions.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
-        });
-        builder.Services.AddAuthentication().AddMicrosoftAccount(microsoftOptions =>
-        {
-            microsoftOptions.ClientId = builder.Configuration["Authentication:Microsoft:ClientId"];
-            microsoftOptions.ClientSecret = builder.Configuration["Authentication:Microsoft:ClientSecret"];
+            facebookOptions.AppId = "982864786065060";
+            facebookOptions.AppSecret = "f96115ee27176a1264a5b56bee7ddeeb";
         });
 
         builder.Services.AddTransient<IEmailSender, EmailSender>(); // EMAIL SENDER
@@ -72,6 +67,7 @@ internal class Program
         builder.Services.AddControllersWithViews(); // MVC
 
         var app = builder.Build();
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
@@ -117,6 +113,17 @@ internal class Program
                 return x.Response.WriteAsync("NO");
             }
         });*/
+
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+
+            var context = services.GetRequiredService<ApplicationDbContext>();
+            if (context.Database.GetPendingMigrations().Any())
+            {
+                context.Database.Migrate();
+            }
+        }
 
         app.Run();
     }

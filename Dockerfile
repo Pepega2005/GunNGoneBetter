@@ -1,8 +1,11 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0
 
 WORKDIR /app
-
-COPY . .
+COPY ./GunNGoneBetter/ ./GunNGoneBetter/
+COPY ./GunNGoneBetter_DataMigrations/ ./GunNGoneBetter_DataMigrations/
+COPY ./GunNGoneBetter_Utility/ ./GunNGoneBetter_Utility/
+COPY ./GunNGoneBetter_Models/ ./GunNGoneBetter_Models/
+COPY ./GunNGoneBetter.sln .
 RUN dotnet publish -c Release -o release
 
 WORKDIR /app/release

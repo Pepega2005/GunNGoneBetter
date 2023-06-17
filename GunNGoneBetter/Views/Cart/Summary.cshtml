@@ -75,7 +75,7 @@
              Product Name: @Model.ProductList[i].Name
          </p>
 
-        @if (User.IsInRole(GunNGoneBetter_Utility.PathManager.AdminRole))
+        if (User.IsInRole(GunNGoneBetter_Utility.PathManager.AdminRole))
         {
             <p>
                 Count: @Model.ProductList[i].TempCount
@@ -144,23 +144,25 @@
 
                 braintree.dropin.create({
                 authorization: tokenClient,
-                container: '#dropin-container'
+                container: '#dropin-container',
                 },
                 
                 // первый параметр для ошибки, второй - экземпляр подключения
                 function (error, dropinInstance) {
                     // тут происходит обработка события
-                    form.addEventListener('submit', function () {
+                    form.addEventListener('submit', function (event) {
                         // блочим автоматическую передачу формы
-                        event.preventDefault();
+                        if (User.IsInRole(GunNGoneBetter_Utility.PathManager.AdminRole)) {
+                            event.preventDefault();
 
-                        // добавить nonce в форму и затем отправить ее
-                        dropinInstance.requestPaymentMethod(function(err, payload) {
-                            // отправить nonce на наш сервер
-                            document.querySelector('#nonce').value = payload.nonce;
+                            // добавить nonce в форму и затем отправить ее
+                            dropinInstance.requestPaymentMethod(function (err, payload) {
+                                // отправить nonce на наш сервер
+                                document.querySelector('#nonce').value = payload.nonce;
 
-                            form.submit();
-                        })
+                                form.submit();
+                            })
+                        }                       
                     })
                 });
 
